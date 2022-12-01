@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -24,18 +25,11 @@ func main() {
 			totalCalories[index] += calories
 		}
 	}
+	sort.Slice(totalCalories, func(i, j int) bool {
+		return totalCalories[i] > totalCalories[j]
+	})
 
-	log.Println(findMaxCalories(totalCalories))
-}
-
-func findMaxCalories(totalCalories []int) int {
-	var max = totalCalories[0]
-	for i := range totalCalories {
-		if totalCalories[i] > max {
-			max = totalCalories[i]
-		}
-	}
-	return max
+	log.Println(totalCalories[0] + totalCalories[1] + totalCalories[2])
 }
 
 func readInput(path string) []string {
@@ -43,7 +37,12 @@ func readInput(path string) []string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(f)
 	scanner := bufio.NewScanner(f)
 
 	var input []string
